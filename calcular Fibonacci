@@ -1,0 +1,48 @@
+.text
+.globl main
+
+main:
+    # Calcular o 30º termo da sequência de Fibonacci
+    li $a0, 30          # Passa 30 como argumento
+    jal fib             # Chama a função fib
+    move $s1, $v0       # Armazena o resultado em $s1
+
+    # Calcular o 41º termo da sequência de Fibonacci
+    li $a0, 41          # Passa 41 como argumento
+    jal fib             # Chama a função fib
+    move $s2, $v0       # Armazena o resultado em $s2
+
+    # Calcular o 40º termo da sequência de Fibonacci
+    li $a0, 40          # Passa 40 como argumento
+    jal fib             # Chama a função fib
+    move $s3, $v0       # Armazena o resultado em $s3
+
+    # Calcular a razão áurea (phi)
+    mtc1 $s2, $f1       # Move F_41 para $f1
+    cvt.s.w $f1, $f1    # Converte para ponto flutuante
+    mtc1 $s3, $f2       # Move F_40 para $f2
+    cvt.s.w $f2, $f2    # Converte para ponto flutuante
+    div.s $f0, $f1, $f2 # Calcula a razão áurea (F_41 / F_40)
+
+    # Encerrar o programa
+    li $v0, 10
+    syscall
+
+fib:
+    blez $a0, base      # Se $a0 <= 0, vá para base
+
+    li $v0, 0           # Inicializa F(0)
+    li $v1, 1           # Inicializa F(1)
+
+loop:
+    add $t0, $v0, $v1   # t0 = v0 + v1
+    move $v0, $v1       # v0 = v1
+    move $v1, $t0       # v1 = t0
+    sub $a0, $a0, 1     # a0 = a0 - 1
+    bgtz $a0, loop      # Se a0 > 0, repete o loop
+
+    jr $ra              # Retorna da função
+
+base:
+    move $v0, $a0       # Retorna $a0 se $a0 <= 0
+    jr $ra              # Retorna da função
